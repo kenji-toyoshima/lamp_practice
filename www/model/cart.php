@@ -23,6 +23,7 @@ function get_user_carts($db, $user_id){
     WHERE
       carts.user_id = {$user_id}
   ";
+  // <db.php参照>
   return fetch_all_query($db, $sql);
 }
 

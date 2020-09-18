@@ -1,5 +1,5 @@
 <?php
-
+// $_SERVER['DOCUMENT_ROOT']= /var/www/html
 define('MODEL_PATH', $_SERVER['DOCUMENT_ROOT'] . '/../model/');
 define('VIEW_PATH', $_SERVER['DOCUMENT_ROOT'] . '/../view/');
 
@@ -22,7 +22,9 @@ define('CART_URL', '/cart.php');
 define('FINISH_URL', '/finish.php');
 define('ADMIN_URL', '/admin.php');
 
+//複数行テキストが渡されてもNGとする　XSS対策
 define('REGEXP_ALPHANUMERIC', '/\A[0-9a-zA-Z]+\z/');
+//()がある意味がわからない
 define('REGEXP_POSITIVE_INTEGER', '/\A([1-9][0-9]*|0)\z/');
 
 

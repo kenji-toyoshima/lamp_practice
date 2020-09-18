@@ -3,7 +3,7 @@ require_once MODEL_PATH . 'functions.php';
 require_once MODEL_PATH . 'db.php';
 
 // DB利用
-
+//itemsテーブルから$item_idに一致する各種データを取得
 function get_item($db, $item_id){
   $sql = "
     SELECT
@@ -18,10 +18,12 @@ function get_item($db, $item_id){
     WHERE
       item_id = {$item_id}
   ";
-
+  //$sqlの内容を実行し、1行だけレコードを取得 <db.phpを参照>
   return fetch_query($db, $sql);
 }
 
+//itemsテーブルから各種データを取得 
+//$is_open === trueの時は公開しているものを取得
 function get_items($db, $is_open = false){
   $sql = '
     SELECT
@@ -39,28 +41,38 @@ function get_items($db, $is_open = false){
       WHERE status = 1
     ';
   }
-
+  //$sqlの内容を実行し、全行のレコードを取得 <db.phpを参照>
   return fetch_all_query($db, $sql);
 }
 
+//itemsテーブルから全てのデータを取得 
 function get_all_items($db){
   return get_items($db);
 }
 
+//itemsテーブルから公開しているデータのみを取得 
 function get_open_items($db){
   return get_items($db, true);
 }
 
+//商品登録
 function regist_item($db, $name, $price, $stock, $status, $image){
+  //画像のアップロードが有効だった場合、ランダムなファイル名を返す
   $filename = get_upload_filename($image);
+  //$name, $price, $stock, $filename, $statusの全てがTRUEの場合、TRUEを返す
   if(validate_item($name, $price, $stock, $filename, $status) === false){
     return false;
   }
+  //トランザクションを開始し、insert_itemを実行
   return regist_item_transaction($db, $name, $price, $stock, $status, $image, $filename);
 }
 
+
+//トランザクションを開始し、insert_itemを実行
 function regist_item_transaction($db, $name, $price, $stock, $status, $image, $filename){
+  //トランザクション開始
   $db->beginTransaction();
+  //itemsテーブルへの各種情報を追加 ・アップロードした画像の指定のフォルダへの保存がうまくいけばコミットしTRUEを返す　失敗すればrollbackし、FALSEを返す
   if(insert_item($db, $name, $price, $stock, $filename, $status) 
     && save_image($image, $filename)){
     $db->commit();
@@ -71,6 +83,8 @@ function regist_item_transaction($db, $name, $price, $stock, $status, $image, $f
   
 }
 
+
+//itemsテーブルに$name, $price, $stock, $filename, $statusを追加
 function insert_item($db, $name, $price, $stock, $filename, $status){
   $status_value = PERMITTED_ITEM_STATUSES[$status];
   $sql = "
@@ -84,10 +98,10 @@ function insert_item($db, $name, $price, $stock, $filename, $status){
       )
     VALUES('{$name}', {$price}, {$stock}, '{$filename}', {$status_value});
   ";
-
+  //SQLを実行  うまくいけばTRUEを返す<db.php参照>
   return execute_query($db, $sql);
 }
-
+//商品ステータスの変更
 function update_item_status($db, $item_id, $status){
   $sql = "
     UPDATE
@@ -101,7 +115,7 @@ function update_item_status($db, $item_id, $status){
   
   return execute_query($db, $sql);
 }
-
+//在庫数の変更
 function update_item_stock($db, $item_id, $stock){
   $sql = "
     UPDATE
@@ -116,21 +130,27 @@ function update_item_stock($db, $item_id, $stock){
   return execute_query($db, $sql);
 }
 
+
 function destroy_item($db, $item_id){
+  //itemsテーブルから$item_idに一致する各種データを取得
   $item = get_item($db, $item_id);
   if($item === false){
     return false;
   }
+  //トランザクションを開始　
   $db->beginTransaction();
+  //$item_idの商品情報を削除
   if(delete_item($db, $item['item_id'])
+    //$filenameが存在した場合、ファイルを削除　
     && delete_image($item['image'])){
+    //商品情報と画像データを消去できたらコミット処理
     $db->commit();
     return true;
   }
   $db->rollback();
   return false;
 }
-
+//$item_idの商品情報を削除
 function delete_item($db, $item_id){
   $sql = "
     DELETE FROM
@@ -139,7 +159,7 @@ function delete_item($db, $item_id){
       item_id = {$item_id}
     LIMIT 1
   ";
-  
+  //クエリを実行 うまくいけばTRUEを返す<db.php参照>
   return execute_query($db, $sql);
 }
 
@@ -150,7 +170,9 @@ function is_open($item){
   return $item['status'] === 1;
 }
 
+//$name, $price, $stock, $filename, $statusの全てがTRUEの場合、TRUEを返す
 function validate_item($name, $price, $stock, $filename, $status){
+  
   $is_valid_item_name = is_valid_item_name($name);
   $is_valid_item_price = is_valid_item_price($price);
   $is_valid_item_stock = is_valid_item_stock($stock);
@@ -164,8 +186,10 @@ function validate_item($name, $price, $stock, $filename, $status){
     && $is_valid_item_status;
 }
 
+//item_nameが正当であればTRUEを返す
 function is_valid_item_name($name){
   $is_valid = true;
+  //$nameが指定の文字数であればTRUEを返す。そうでなければエラーメッセージをセッションに追加しfalseを返す。<function.phpを参照> 
   if(is_valid_length($name, ITEM_NAME_LENGTH_MIN, ITEM_NAME_LENGTH_MAX) === false){
     set_error('商品名は'. ITEM_NAME_LENGTH_MIN . '文字以上、' . ITEM_NAME_LENGTH_MAX . '文字以内にしてください。');
     $is_valid = false;
@@ -173,8 +197,10 @@ function is_valid_item_name($name){
   return $is_valid;
 }
 
+//item_priceが正当であればTRUEを返す
 function is_valid_item_price($price){
   $is_valid = true;
+  //$priceが正の整数であればTRUEを返す。そうでなければエラーメッセージをセッションに追加しfalseを返す。<function.phpを参照>
   if(is_positive_integer($price) === false){
     set_error('価格は0以上の整数で入力してください。');
     $is_valid = false;
@@ -182,6 +208,7 @@ function is_valid_item_price($price){
   return $is_valid;
 }
 
+//item_stockが正当であればTRUEを返す。そうでなければエラーメッセージをセッションに追加しfalseを返す。<function.phpを参照>
 function is_valid_item_stock($stock){
   $is_valid = true;
   if(is_positive_integer($stock) === false){
@@ -191,6 +218,8 @@ function is_valid_item_stock($stock){
   return $is_valid;
 }
 
+//item_filenameが正当であればTRUEを返す。そうでなければエラーメッセージをセッションに追加しfalseを返す。<function.phpを参照>
+//$filename = get_upload_filename($image);画像のアップロードが有効だった場合、ランダムなファイル名を返す
 function is_valid_item_filename($filename){
   $is_valid = true;
   if($filename === ''){
@@ -199,6 +228,7 @@ function is_valid_item_filename($filename){
   return $is_valid;
 }
 
+//$statusの値が1か０であればTRUEを返す。そうでなければFALSEを返す。
 function is_valid_item_status($status){
   $is_valid = true;
   if(isset(PERMITTED_ITEM_STATUSES[$status]) === false){
