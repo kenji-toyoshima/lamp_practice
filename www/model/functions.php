@@ -54,7 +54,7 @@ function get_get($name){
   };
   return '';
 }
-
+//postで送信された値を取得
 function get_post($name){
   if(isset($_POST[$name]) === true){
     return $_POST[$name];
