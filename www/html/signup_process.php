@@ -17,7 +17,7 @@ $db = get_db_connect();
 
 try{
   $result = regist_user($db, $name, $password, $password_confirmation);
-  if( $result=== false){
+  if($result=== false){
     set_error('ユーザー登録に失敗しました。');
     redirect_to(SIGNUP_URL);
   }
