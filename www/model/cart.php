@@ -77,29 +77,44 @@ function insert_cart($db, $user_id, $item_id, $amount = 1){
   return execute_query($db, $sql);
 }
 
+// function update_cart_amount($db, $cart_id, $amount){
+//   $sql = "
+//     UPDATE
+//       carts
+//     SET
+//       amount = {$amount}
+//     WHERE
+//       cart_id = {$cart_id}
+//     LIMIT 1
+//   ";
+//   return execute_query($db, $sql);
+// }
+
 function update_cart_amount($db, $cart_id, $amount){
   $sql = "
     UPDATE
       carts
     SET
-      amount = {$amount}
+      amount = ?
     WHERE
-      cart_id = {$cart_id}
+      cart_id = ?
     LIMIT 1
   ";
-  return execute_query($db, $sql);
+  $param = [$amount,$cart_id];
+  return execute_query($db, $sql, $param);
 }
+
 
 function delete_cart($db, $cart_id){
   $sql = "
     DELETE FROM
       carts
     WHERE
-      cart_id = {$cart_id}
+      cart_id = ?
     LIMIT 1
   ";
-
-  return execute_query($db, $sql);
+  $param = [$cart_id];
+  return execute_query($db, $sql, $param);
 }
 
 function purchase_carts($db, $carts){
@@ -124,10 +139,10 @@ function delete_user_carts($db, $user_id){
     DELETE FROM
       carts
     WHERE
-      user_id = {$user_id}
+      user_id = ?
   ";
-
-  execute_query($db, $sql);
+  $param = [$user_id];
+  execute_query($db, $sql, $param);
 }
 
 
