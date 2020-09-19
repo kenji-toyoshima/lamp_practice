@@ -16,10 +16,11 @@ function get_item($db, $item_id){
     FROM
       items
     WHERE
-      item_id = {$item_id}
+      item_id = ?
   ";
+  $param = [$item_id];
   //$sqlの内容を実行し、1行だけレコードを取得 <db.phpを参照>
-  return fetch_query($db, $sql);
+  return fetch_query($db, $sql, $param);
 }
 
 //itemsテーブルから各種データを取得 
@@ -96,10 +97,11 @@ function insert_item($db, $name, $price, $stock, $filename, $status){
         image,
         status
       )
-    VALUES('{$name}', {$price}, {$stock}, '{$filename}', {$status_value});
+    VALUES(?,?,?,?,?);
   ";
+  $param = [$name, $price, $stock, $filename, $status_value];
   //SQLを実行  うまくいけばTRUEを返す<db.php参照>
-  return execute_query($db, $sql);
+  return execute_query($db, $sql, $param);
 }
 //商品ステータスの変更
 function update_item_status($db, $item_id, $status){
@@ -107,13 +109,13 @@ function update_item_status($db, $item_id, $status){
     UPDATE
       items
     SET
-      status = {$status}
+      status = ?
     WHERE
-      item_id = {$item_id}
+      item_id = ?
     LIMIT 1
   ";
-  
-  return execute_query($db, $sql);
+  $param = [$status,$item_id];
+  return execute_query($db, $sql, $param);
 }
 //在庫数の変更
 function update_item_stock($db, $item_id, $stock){
@@ -143,7 +145,7 @@ function destroy_item($db, $item_id){
   if(delete_item($db, $item['item_id'])
     //$filenameが存在した場合、ファイルを削除　
     && delete_image($item['image'])){
-    //商品情報と画像データを消去できたらコミット処理
+    //商品情報と画像データを両方消去できたらコミット処理
     $db->commit();
     return true;
   }
@@ -156,11 +158,12 @@ function delete_item($db, $item_id){
     DELETE FROM
       items
     WHERE
-      item_id = {$item_id}
+      item_id = ?
     LIMIT 1
   ";
+  $param = [$item_id];
   //クエリを実行 うまくいけばTRUEを返す<db.php参照>
-  return execute_query($db, $sql);
+  return execute_query($db, $sql, $param);
 }
 
 
