@@ -2,6 +2,7 @@
 require_once '../conf/const.php';
 require_once MODEL_PATH . 'functions.php';
 
+//セッションスタート
 session_start();
 
 if(is_logined() === true){

@@ -47,14 +47,14 @@ function redirect_to($url){
   header('Location: ' . $url);
   exit;
 }
-//$_GET[$name]に値が入っていればその値を返す。なければ初期化　return文が実行されると関数の処理がその時点で終了して値が返される
+//$_GET[$name]に値が入っていればその値を返す。なければ初期化　
 function get_get($name){
   if(isset($_GET[$name]) === true){
     return $_GET[$name];
   };
   return '';
 }
-//postで送信された値を取得
+//$_POST[$name]に値が入っていればその値を返す。なければ初期化　
 function get_post($name){
   if(isset($_POST[$name]) === true){
     return $_POST[$name];
@@ -102,7 +102,7 @@ function get_errors(){
   return $errors;
 }
 
-//$_SESSION['__errors']に値がある　かつ　$_SESSION['__errors']の個数が０でない時
+//$_SESSION['__errors']に値がある　かつ　$_SESSION['__errors']の個数が０でない時にTRUEを返す
 function has_error(){
   return isset($_SESSION['__errors']) && count($_SESSION['__errors']) !== 0;
 }
@@ -124,7 +124,7 @@ function get_messages(){
 
 // $_SESSION['user_id']に値が入っているときにTRUEを返す
 function is_logined(){
-  //$_SESSION['user_id']に値が入っていればその値を返す。入っていなければ初期化
+  //get_session: $_SESSION['user_id']に値が入っていればその値を返す。入っていなければ初期化
   return get_session('user_id') !== '';
 }
 
@@ -214,5 +214,23 @@ function is_valid_upload_image($image){
     return false;
   }
   return true;
+}
+
+// トークンの生成
+function get_csrf_token(){
+  // get_random_string()はユーザー定義関数。
+  $token = get_random_string(30);
+  // set_session()はユーザー定義関数。
+  set_session('csrf_token', $token);
+  return $token;
+}
+
+// トークンのチェック
+function is_valid_csrf_token($token){
+  if($token === '') {
+    return false;
+  }
+  // csrf_tokenのセッションを取得
+  return $token === get_session('csrf_token');
 }
 

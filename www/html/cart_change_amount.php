@@ -7,6 +7,19 @@ require_once MODEL_PATH . 'cart.php';
 
 session_start();
 
+//POSTで送られたtokenを取得
+$token = get_post('token');
+
+// トークンのチェック<function.php参照>
+if(is_valid_csrf_token($token) === false){
+  set_error('不正なリクエストです。');
+  redirect_to(LOGIN_URL);
+}
+
+//CSRFセッションを空にする
+set_session('csrf_token', array());
+
+// $_SESSION['user_id']に値が入っていない時はLOGIN_URLにリダイレクト
 if(is_logined() === false){
   redirect_to(LOGIN_URL);
 }
@@ -17,6 +30,7 @@ $user = get_login_user($db);
 $cart_id = get_post('cart_id');
 $amount = get_post('amount');
 
+//cartsテーブルのamountを変更　<cart.phpを参照>
 if(update_cart_amount($db, $cart_id, $amount)){
   set_message('購入数を更新しました。');
 } else {
