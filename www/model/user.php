@@ -2,7 +2,7 @@
 require_once MODEL_PATH . 'functions.php';
 require_once MODEL_PATH . 'db.php';
 
-//usersテーブルから$user_idのuser_id,name,password,typeをセレクト文で取得
+//usersテーブルから$user_idのuser_id,name,password,typeをセレクト文で取得　失敗すればfalseを返す
 function get_user($db, $user_id){
   $sql = "
     SELECT
@@ -17,7 +17,7 @@ function get_user($db, $user_id){
     LIMIT 1
   ";
   $param = [$user_id];
-  //$sqlを実行し、1行だけデータを取得
+  //$sqlを実行し、1行だけデータを取得 失敗すればfalseを返す<db.php参照>
   return fetch_query($db, $sql, $param);
 }
 
@@ -36,11 +36,11 @@ function get_user_by_name($db, $name){
     LIMIT 1
   ";
   $param = [$name];
-  //$sqlを実行し、1行だけデータを取得
+  //$sqlを実行し、1行だけデータを取得 失敗すればfalseを返す<db.php参照>
   return fetch_query($db, $sql, $param);
 }
 
-//$nameと$passwordが合っていれば
+//$nameと$passwordが合っていればセッションにuser_idを追加し$userを返す　失敗すればfalseを返す
 function login_as($db, $name, $password){
   //usersテーブルからname=$nameのuser_id,name,password,typeをセレクト文で取得
   $user = get_user_by_name($db, $name);
@@ -68,14 +68,14 @@ function get_login_user($db){
 
 //ユーザー登録
 function regist_user($db, $name, $password, $password_confirmation) {
-  if( is_valid_user($name, $password, $password_confirmation) === false){
+  if(is_valid_user($name, $password, $password_confirmation) === false){
     return false;
   }
   //usersテーブルにnameとpasswordを追加
   return insert_user($db, $name, $password);
 }
 
-//ユーザータイプをADMINにする（１）
+//ユーザータイプがadminであればTRUEを返す
 function is_admin($user){
   //$user = get_user_by_name($db, $name); <user.php参照>
   //get_user_by_name: usersテーブルからname=$nameのuser_id,name,password,typeをセレクト文で取得

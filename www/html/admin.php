@@ -11,7 +11,6 @@ session_start();
 // function is_logined(){
 //   return get_session('user_id') !== '';
 // }
-
 if(is_logined() === false){
   redirect_to(LOGIN_URL);
 }
@@ -19,9 +18,10 @@ if(is_logined() === false){
 //dsnを取得してからdbに接続、dbhを返り値とする　<db.php参照>　
 $db = get_db_connect();
 
-// $_SESSION['user_id']を取得後、usersテーブルから$user_idのuser_id,name,password,typeをセレクト文で取得
+// $_SESSION['user_id']を取得後、usersテーブルから$user_idのuser_id,name,password,typeをセレクト文で取得<user.php参照>
 $user = get_login_user($db);
 
+//ユーザータイプがadminでなければLOGIN_URLにリダイレクト<user.php参照>
 if(is_admin($user) === false){
   redirect_to(LOGIN_URL);
 }
@@ -31,4 +31,8 @@ $items = get_all_items($db);
 // 特殊文字をHTMLエンティティに変換
 $items = entity_assoc_array($items);
 
+// CSRFトークンの生成<function.php参照>
+$token= get_csrf_token();
+
+//viewを読み込み
 include_once VIEW_PATH . '/admin_view.php';

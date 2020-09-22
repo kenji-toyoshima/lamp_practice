@@ -7,6 +7,18 @@ require_once MODEL_PATH . 'cart.php';
 
 session_start();
 
+//POSTで送られたtokenを取得
+$token = get_post('token');
+
+// トークンのチェック<function.php参照>
+if(is_valid_csrf_token($token) === false){
+  set_error('不正なリクエストです。');
+  redirect_to(LOGIN_URL);
+}
+
+//CSRFセッションを空にする
+set_session('csrf_token', array());
+
 if(is_logined() === false){
   redirect_to(LOGIN_URL);
 }
@@ -14,9 +26,10 @@ if(is_logined() === false){
 $db = get_db_connect();
 $user = get_login_user($db);
 
-
+//追加した商品のitem_idを取得
 $item_id = get_post('item_id');
 
+//cartに商品を追加
 if(add_cart($db,$user['user_id'], $item_id)){
   set_message('カートに商品を追加しました。');
 } else {

@@ -1,18 +1,20 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
+  <!-- template/head.phpを読み込み -->
   <?php include VIEW_PATH . 'templates/head.php'; ?>
   <title>商品管理</title>
   <link rel="stylesheet" href="<?php print(STYLESHEET_PATH . 'admin.css'); ?>">
 </head>
 <body>
   <?php 
+  // template/header_logined.phpを読み込み
   include VIEW_PATH . 'templates/header_logined.php'; 
   ?>
 
   <div class="container">
     <h1>商品管理</h1>
-
+    <!-- template/message.phpを読み込み -->
     <?php include VIEW_PATH . 'templates/messages.php'; ?>
 
     <form 
@@ -43,7 +45,8 @@
           <option value="close">非公開</option>
         </select>
       </div>
-      
+      <!-- トークンの埋め込み -->
+      <input type="hidden" name="token" value="<?php print($token); ?>">
       <input type="submit" value="商品追加" class="btn btn-primary">
     </form>
 
@@ -61,6 +64,8 @@
         </thead>
         <tbody>
           <?php foreach($items as $item){ ?>
+            <!-- "?(三項演算子)"の直前の値が真なら後に続く二つの値のうち一つ目を返す。 -->
+            <!-- is_open($item): $item['status']===1であればTRUEを返す item.php参照 -->
           <tr class="<?php print(is_open($item) ? '' : 'close_item'); ?>">
             <td><img src="<?php print(IMAGE_PATH . $item['image']);?>" class="item_image"></td>
             <td><?php print($item['name']); ?></td>
@@ -74,6 +79,8 @@
                 </div>
                 <input type="submit" value="変更" class="btn btn-secondary">
                 <input type="hidden" name="item_id" value="<?php print($item['item_id']); ?>">
+                <!-- トークンの埋め込み -->
+                <input type="hidden" name="token" value="<?php print($token); ?>">
               </form>
             </td>
             <td>
@@ -87,11 +94,15 @@
                   <input type="hidden" name="changes_to" value="open">
                 <?php } ?>
                 <input type="hidden" name="item_id" value="<?php print($item['item_id']); ?>">
+                <!-- トークンの埋め込み -->
+                <input type="hidden" name="token" value="<?php print($token); ?>">
               </form>
 
               <form method="post" action="admin_delete_item.php">
                 <input type="submit" value="削除" class="btn btn-danger delete">
                 <input type="hidden" name="item_id" value="<?php print($item['item_id']); ?>">
+                <!-- トークンの埋め込み -->
+                <input type="hidden" name="token" value="<?php print($token); ?>">
               </form>
 
             </td>

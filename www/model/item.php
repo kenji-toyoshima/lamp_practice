@@ -84,8 +84,7 @@ function regist_item_transaction($db, $name, $price, $stock, $status, $image, $f
   
 }
 
-
-//itemsテーブルに$name, $price, $stock, $filename, $statusを追加
+//itemsテーブルに$name, $price, $stock, $filename, $statusを追加 成功すればTRUEを返す
 function insert_item($db, $name, $price, $stock, $filename, $status){
   $status_value = PERMITTED_ITEM_STATUSES[$status];
   $sql = "
@@ -117,7 +116,8 @@ function update_item_status($db, $item_id, $status){
   $param = [$status,$item_id];
   return execute_query($db, $sql, $param);
 }
-//在庫数の変更
+
+//在庫数の変更　成功すればTRUEを返す
 function update_item_stock($db, $item_id, $stock){
   $sql = "
     UPDATE
@@ -132,7 +132,7 @@ function update_item_stock($db, $item_id, $stock){
   return execute_query($db, $sql, $param);
 }
 
-
+//商品情報と画像データを消去
 function destroy_item($db, $item_id){
   //itemsテーブルから$item_idに一致する各種データを取得
   $item = get_item($db, $item_id);
@@ -141,9 +141,9 @@ function destroy_item($db, $item_id){
   }
   //トランザクションを開始　
   $db->beginTransaction();
-  //$item_idの商品情報を削除
+  //$item_idの商品情報を削除 成功した場合TRUEを返す
   if(delete_item($db, $item['item_id'])
-    //$filenameが存在した場合、ファイルを削除　
+    //$filenameが存在した場合、ファイルを削除　成功した場合TRUEを返す<function.php 参照>
     && delete_image($item['image'])){
     //商品情報と画像データを両方消去できたらコミット処理
     $db->commit();
@@ -152,6 +152,7 @@ function destroy_item($db, $item_id){
   $db->rollback();
   return false;
 }
+
 //$item_idの商品情報を削除
 function delete_item($db, $item_id){
   $sql = "
@@ -168,7 +169,7 @@ function delete_item($db, $item_id){
 
 
 // 非DB
-
+//$item['status']===1であればTRUEを返す
 function is_open($item){
   return $item['status'] === 1;
 }
