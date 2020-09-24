@@ -115,12 +115,12 @@ function delete_cart($db, $cart_id){
 
 //カートにある商品を購入し、cartsテーブルから購入した商品を削除
 function purchase_carts($db, $carts){
-  //商品購入に手続きでエラーが発生しないかを確認し、エラーがある場合はfalseを返す
+  //商品購入手続きでエラーが発生しないかを確認し、エラーがある場合はfalseを返す
   if(validate_cart_purchase($carts) === false){
     return false;
   }
   foreach($carts as $cart){
-    //在庫数の変更が成功すれば
+    //在庫数の変更が失敗すれば
     if(update_item_stock(
         $db, 
         $cart['item_id'], 
