@@ -240,3 +240,34 @@ function is_valid_item_status($status){
   }
   return $is_valid;
 }
+
+//購入履歴テーブルへの登録
+function insert_history($db, $user_id){
+  $sql = "
+    INSERT INTO
+      purchase_history(
+        user_id
+      )
+    VALUES(?);
+  ";
+  $param = [$user_id];
+  return execute_query($db, $sql, $param);
+}
+
+//購入詳細テーブルへの登録
+function insert_details($db, $order_id, $item_id, $price, $amount){
+  $sql = "
+    INSERT INTO
+      purchase_details(
+        order_id,
+        item_id,
+        price,
+        amount
+      )
+    VALUES(?,?,?,?)
+  ";
+  $param = [$order_id, $item_id, $price, $amount];
+  return execute_query($db, $sql, $param);
+}
+
+
