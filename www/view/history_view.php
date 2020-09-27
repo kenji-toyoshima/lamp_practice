@@ -29,7 +29,7 @@
             <td><?php print($history['purchase_datetime']); ?></td>
             <td><?php print number_format($history['total']); ?>円</td>
             <td>
-            <form method="post" action="details.php">
+            <form method="post" action="/details.php">
               <div class="form-group">
               <input type="submit" value="購入明細" class="btn btn-secondary">
               <input type="hidden" name="order_id" value="<?php print($history['order_id']); ?>">

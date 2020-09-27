@@ -31,4 +31,7 @@ $histories = get_history($db, $user['user_id']);
 // 特殊文字をHTMLエンティティに変換
 $histories = entity_assoc_array($histories);
 
+// CSRFトークンの生成<function.php参照>
+$token= get_csrf_token();
+
 include_once '../view/history_view.php';
