@@ -270,4 +270,72 @@ function insert_details($db, $order_id, $item_id, $price, $amount){
   return execute_query($db, $sql, $param);
 }
 
+//購入履歴取得
+function get_history($db, $user_id){
+  //管理者の時
+  if($user_id == 4){
+    $sql = "
+      SELECT 
+        purchase_history.order_id,
+        purchase_datetime,
+        sum(price*amount) as total
+      FROM
+        purchase_history
+        INNER JOIN
+        purchase_details
+      ON
+        purchase_history.order_id = purchase_details.order_id
+      GROUP BY 
+        purchase_history.order_id
+      ORDER BY  
+        order_id DESC;
+    ";
+    //$sqlの内容を実行し、1行だけレコードを取得 <db.phpを参照>
+    return fetch_all_query($db, $sql);
+  } 
+  //一般ユーザーの時
+  else{
+    $sql = "
+      SELECT 
+        purchase_history.order_id,
+        purchase_datetime,
+        sum(price*amount) as total
+      FROM
+        purchase_history
+        INNER JOIN
+        purchase_details
+      ON
+        purchase_history.order_id = purchase_details.order_id
+      WHERE 
+        user_id = ?
+      GROUP BY 
+        purchase_history.order_id
+      ORDER BY
+        order_id DESC;
+    ";
+    //$sqlの内容を実行し、1行だけレコードを取得 <db.phpを参照>
+    return fetch_all_query($db, $sql,[$user_id]);
+  } 
+}
 
+
+//購入明細取得
+function get_details($db, $order_id){
+  $sql = "
+  SELECT 
+    purchase_details.price,
+    amount,
+    purchase_details.price*amount as sub_total,
+    items.name
+  FROM
+    purchase_details
+  INNER JOIN
+    items
+  ON
+    purchase_details.item_id = items.item_id
+  WHERE
+    order_id=?
+  ";
+  //$sqlの内容を実行し、1行だけレコードを取得 <db.phpを参照>
+  return fetch_all_query($db, $sql, [$order_id]);
+}

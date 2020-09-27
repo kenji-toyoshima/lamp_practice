@@ -52,11 +52,8 @@ try{
   foreach($carts as $cart){
     $item_id = $cart['item_id'];
     $amount = $cart['amount'];
-    //itemsテーブルから$item_idに一致する各種データを取得
-    $item = get_item($db, $item_id);
-    $price = $item['price'];
-    $price = $item['price'];
-    //購入明細テーブルに登録
+    $price = $cart['price'];
+    ////購入履歴テーブルに登録
     if(insert_details($db, $order_id, $item_id, $price, $amount) === false){
       set_error('購入明細を更新できませんでした。');
     }

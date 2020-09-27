@@ -21,6 +21,7 @@ define('HOME_URL', '/index.php');
 define('CART_URL', '/cart.php');
 define('FINISH_URL', '/finish.php');
 define('ADMIN_URL', '/admin.php');
+define('HISTORY_URL', '/history.php');
 
 //複数行テキストが渡されてもNGとする　XSS対策
 define('REGEXP_ALPHANUMERIC', '/\A[0-9a-zA-Z]+\z/');
