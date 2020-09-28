@@ -19,17 +19,6 @@ if(is_logined() === false){
   redirect_to(LOGIN_URL);
 }
 
-//POSTで送られたtokenを取得
-$token = get_post('token');
-
-// トークンのチェック<function.php参照>
-if(is_valid_csrf_token($token) === false){
-  set_error('不正なリクエストです。');
-  redirect_to(LOGIN_URL);
-}
-
-//CSRFセッションを空にする
-set_session('csrf_token', array());
 
 //order_idを取得
 $order_id = get_post('order_id');
