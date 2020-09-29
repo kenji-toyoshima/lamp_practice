@@ -25,7 +25,7 @@ function get_item($db, $item_id){
 
 //itemsテーブルから各種データを取得 
 //$is_open === trueの時は公開しているものを取得
-function get_items($db, $is_open = false){
+function get_items($db, $is_open = false, $pulldown = '新着順'){
   $sql = '
     SELECT
       item_id, 
@@ -42,9 +42,35 @@ function get_items($db, $is_open = false){
       WHERE status = 1
     ';
   }
+  if($pulldown === '新着順'){
+    $sql .= '
+    ORDER BY
+      item_id DESC;
+    ';
+  }
+  elseif($pulldown === '価格の安い順'){
+    $sql .= '
+    ORDER BY
+      price ASC;
+    ';
+  }
+  elseif($pulldown === '価格の高い順'){
+    $sql .= '
+    ORDER BY
+      price DESC;
+    ';
+  }
+
+
+
   //$sqlの内容を実行し、全行のレコードを取得 <db.phpを参照>
   return fetch_all_query($db, $sql);
 }
+
+
+
+
+
 
 //itemsテーブルから全てのデータを取得 
 function get_all_items($db){
@@ -54,6 +80,11 @@ function get_all_items($db){
 //itemsテーブルから公開しているデータのみを取得 
 function get_open_items($db){
   return get_items($db, true);
+}
+
+//itemsテーブルから公開しているデータを並び替えて表示
+function get_pulldown_items($db,$pulldown){
+  return get_items($db, true, $pulldown);
 }
 
 //商品登録

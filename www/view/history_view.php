@@ -33,8 +33,6 @@
               <div class="form-group">
               <input type="submit" value="購入明細" class="btn btn-secondary">
               <input type="hidden" name="order_id" value="<?php print($history['order_id']); ?>">
-              <!-- トークンの埋め込み -->
-              <input type="hidden" name="token" value="<?php print($token); ?>">
             </form>
           </td>
           </tr>

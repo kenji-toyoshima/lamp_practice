@@ -21,6 +21,17 @@
             <a class="nav-link" href="<?php print(ADMIN_URL);?>">管理</a>
           </li>
         <?php } ?>
+        <li class="nav-item">
+          <form method="get" action="/index_pulldown.php">  
+            <select name="pulldown">
+              <option value="新着順">新着順</option>
+              <option value="価格の安い順">価格の安い順</option>
+              <option value="価格の高い順">価格の高い順</option>
+            </select>
+            <input type="submit" value="並び替え">
+          </form>
+        </li>
+
       </ul>
     </div>
   </nav>
